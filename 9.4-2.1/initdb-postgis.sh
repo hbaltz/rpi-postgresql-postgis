@@ -8,8 +8,17 @@ file_env 'PGUSER' "$POSTGRES_USER"
 
 # Create the 'template_postgis' template db
 "${psql[@]}" <<- 'EOSQL'
+CREATE DATABASE postgres;
+GRANT ALL PRIVILEGES ON DATABASE postgres TO "$POSTGRES_USER";
+
 CREATE DATABASE template_postgis;
 UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template_postgis';
+EOSQL
+
+"${psql[@]}" <<- 'EOSQL'
+	CREATE USER docker WITH SUPERUSER PASSWORD 'docker';
+	CREATE DATABASE docker;
+	GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
 EOSQL
 
 # Load PostGIS into both template_database and $POSTGRES_DB

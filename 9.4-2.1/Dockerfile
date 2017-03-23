@@ -4,6 +4,10 @@ FROM tobi312/rpi-postgresql:9.4
 ENV http_proxy http://10.0.4.2:3128
 ENV https_proxy https://10.0.4.2:3128
 
+ENV POSTGRES_USER docker
+ENV POSTGRES_PASSWORD docker
+ENV POSTGRES_DB docker
+
 ENV POSTGIS_MAJOR 2.1
 ENV POSTGIS_VERSION 2.1.*
 
@@ -18,8 +22,6 @@ RUN mkdir -p /docker-entrypoint-initdb.d
 COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/postgis.sh
 RUN chmod +x /docker-entrypoint-initdb.d/postgis.sh
 
-RUN ls /usr/share/postgresql/9.4
-
 RUN sed -e '90d' -i /usr/share/postgresql/9.4/pg_hba.conf.sample
 RUN sed -e '91d' -i /usr/share/postgresql/9.4/pg_hba.conf.sample
 
@@ -27,4 +29,3 @@ RUN echo "host all all 0.0.0.0/0 trust" >> '/usr/share/postgresql/9.4/pg_hba.con
 RUN echo "local all all trust" >> '/usr/share/postgresql/9.4/pg_hba.conf.sample'
 
 RUN sed -e "s/[#]\?listen_addresses = .*/listen_addresses = '*'/g" -i '/usr/share/postgresql/postgresql.conf.sample'
-
